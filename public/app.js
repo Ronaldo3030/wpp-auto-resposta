@@ -290,7 +290,7 @@ async function fetchAnalytics() {
 // ── Helpers ───────────────────────────────────────────────────
 function formatPhone(jid) {
   if (!jid) return "";
-  return "+" + jid.replace(/:\d+$/, "").replace(/@.+$/, "").replace(/(\d{2})(\d{2})(\d{5})(\d{4})/, "$1 ($2) $3-$4");
+  return "+" + jid.replace(/:\d+$/, "").replace(/@.+$/, "").replace(/(\d{2})(\d{2})(\d{4,5})(\d{4})/, "$1 ($2) $3-$4");
 }
 
 function timeAgo(iso) {

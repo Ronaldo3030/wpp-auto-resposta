@@ -10,12 +10,17 @@ import {
 import { sendText } from "../../sender";
 import { botEmitter } from "../emitter";
 
-export function createApiRouter(getSock: () => WASocket | null): Router {
+export function createApiRouter(getSock: () => WASocket | null, getPhone: () => string | null): Router {
   const router = Router();
 
   router.get("/status", (_req: Request, res: Response) => {
     const sock = getSock();
-    res.json({ connected: sock !== null });
+    const connected = sock !== null;
+    res.json({
+      connected,
+      status: connected ? "open" : "close",
+      phone: getPhone(),
+    });
   });
 
   router.get("/conversations", (_req: Request, res: Response) => {

@@ -1,0 +1,30 @@
+greeting: |
+  Olá! Bem-vindo ao nosso atendimento.
+  Escolha uma opção respondendo com o número:
+
+menu:
+  - key: "1"
+    label: "Horário de funcionamento"
+    reply: |
+      Nosso horário:
+      Segunda a Sexta: 9h - 18h
+      Sábado: 9h - 13h
+      Domingo: Fechado
+
+  - key: "2"
+    label: "Serviços"
+    reply: |
+      Oferecemos:
+      - Consultoria
+      - Treinamento
+      - Suporte
+
+  - key: "3"
+    label: "Falar com atendente"
+    type: human
+    reply: |
+      Você será atendido por um de nossos atendentes em breve.
+      Aguarde, por favor.
+
+fallback: |
+  Não entendi. Por favor, responda com o número de uma das opções.

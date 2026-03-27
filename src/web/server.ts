@@ -48,6 +48,11 @@ export async function startWebServer(port = 3000): Promise<WebServer> {
   });
 
   botEmitter.on("connection", (data: { status: string; phone?: string }) => {
+    if (data.status === "open" && data.phone) {
+      currentPhone = data.phone;
+    } else if (data.status === "close") {
+      currentPhone = null;
+    }
     broadcast({ type: "connection", data });
   });
 

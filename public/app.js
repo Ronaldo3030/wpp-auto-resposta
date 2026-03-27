@@ -15,6 +15,7 @@ function connectWs() {
 
   ws.onopen = () => {
     // Buscar estado inicial ao (re)conectar
+    fetchStatus();
     fetchConversations();
     fetchAnalytics();
   };

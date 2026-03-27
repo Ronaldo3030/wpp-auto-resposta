@@ -10,15 +10,18 @@ import {
 import { sendText } from "../../sender";
 import { botEmitter } from "../emitter";
 
-export function createApiRouter(getSock: () => WASocket | null, getPhone: () => string | null): Router {
+export function createApiRouter(
+  getSock: () => WASocket | null,
+  getPhone: () => string | null,
+  getStatus: () => string,
+): Router {
   const router = Router();
 
   router.get("/status", (_req: Request, res: Response) => {
-    const sock = getSock();
-    const connected = sock !== null;
+    const status = getStatus();
     res.json({
-      connected,
-      status: connected ? "open" : "close",
+      connected: status === "open",
+      status,
       phone: getPhone(),
     });
   });

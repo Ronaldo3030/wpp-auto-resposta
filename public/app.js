@@ -66,6 +66,14 @@ function handleConnectionEvent({ status, phone }) {
   }
 }
 
+async function fetchStatus() {
+  try {
+    const res = await fetch("/api/status");
+    const data = await res.json();
+    handleConnectionEvent({ status: data.status, phone: data.phone });
+  } catch {}
+}
+
 // ── QR Code ───────────────────────────────────────────────────
 function showQr(dataUrl) {
   document.getElementById("qr-panel").style.display = "flex";

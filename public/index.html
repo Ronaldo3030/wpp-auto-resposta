@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ZAP Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<header>
+  <div id="status-dot"></div>
+  <h1>ZAP</h1>
+  <span id="status-label">Conectando...</span>
+  <span id="phone-label"></span>
+</header>
+
+<div id="analytics">
+  <div class="stat">
+    <span>Conversas</span>
+    <span id="stat-total">—</span>
+  </div>
+  <div class="stat">
+    <span>Em atendimento</span>
+    <span id="stat-human">—</span>
+  </div>
+  <div class="stat">
+    <span>Mensagens hoje</span>
+    <span id="stat-today">—</span>
+  </div>
+</div>
+
+<div id="body">
+  <!-- Sidebar -->
+  <aside id="sidebar">
+    <div id="sidebar-header">Conversas ativas</div>
+    <div id="conversation-list"></div>
+  </aside>
+
+  <!-- Main -->
+  <main id="main">
+    <!-- QR code (mostrado quando desconectado) -->
+    <div id="qr-panel" style="display:none">
+      <h2>Escaneie o QR code com o WhatsApp</h2>
+      <div id="qr-placeholder">Aguardando QR code...</div>
+      <img id="qr-img" style="display:none" alt="QR Code" />
+    </div>
+
+    <!-- Chat selecionado -->
+    <div id="chat-panel" style="display:none">
+      <div id="chat-header">
+        <span id="chat-jid"></span>
+        <span id="chat-badge" class="badge"></span>
+        <button id="takeover-btn"></button>
+      </div>
+      <div id="messages"></div>
+      <div id="send-bar">
+        <input id="send-input" type="text" placeholder="Digite uma mensagem..." />
+        <button id="send-btn">Enviar</button>
+      </div>
+    </div>
+
+    <!-- Estado vazio -->
+    <div id="empty-state">Selecione uma conversa</div>
+  </main>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

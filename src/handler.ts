@@ -1,7 +1,8 @@
 import { WAMessage, WASocket } from "@whiskeysockets/baileys";
 import { buildMenuText, findReply, getFlows } from "./flows";
-import { getState, setState, resetState, setHumanTakeover, clearHumanTakeover, isHumanTakeover } from "./state";
+import { getState, setState, resetState, setHumanTakeover, clearHumanTakeover, isHumanTakeover, logMessage } from "./state";
 import { sendText } from "./sender";
+import { botEmitter } from "./web/emitter";
 
 export async function handleMessage(
   sock: WASocket,
@@ -26,14 +27,21 @@ export async function handleMessage(
     const cmd = text.trim().toLowerCase();
     if (cmd.startsWith("#bot")) {
       clearHumanTakeover(jid);
+      botEmitter.emit("takeover", { jid, active: false });
     } else if (cmd.startsWith("#humano")) {
       setHumanTakeover(jid);
+      botEmitter.emit("takeover", { jid, active: true });
     } else {
       // Atendente respondeu manualmente: desativar bot
       setHumanTakeover(jid);
+      botEmitter.emit("takeover", { jid, active: true });
     }
     return;
   }
+
+  // Registrar mensagem recebida
+  logMessage(jid, "in", text);
+  botEmitter.emit("message", { jid, direction: "in", body: text, created_at: new Date().toISOString() });
 
   // Bot silenciado para este contato (atendimento humano ativo)
   if (isHumanTakeover(jid)) return;
@@ -54,6 +62,7 @@ export async function handleMessage(
     await sendText(sock, jid, result.reply);
     if (result.type === "human") {
       setHumanTakeover(jid);
+      botEmitter.emit("takeover", { jid, active: true });
     } else {
       resetState(jid);
     }

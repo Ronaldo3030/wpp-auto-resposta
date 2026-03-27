@@ -14,7 +14,18 @@ export function initDb(): void {
       human_takeover INTEGER NOT NULL DEFAULT 0,
       last_activity TEXT NOT NULL,
       human_takeover_at TEXT
-    )
+    );
+
+    CREATE TABLE IF NOT EXISTS messages (
+      id         INTEGER PRIMARY KEY AUTOINCREMENT,
+      jid        TEXT NOT NULL,
+      direction  TEXT NOT NULL CHECK(direction IN ('in','out')),
+      body       TEXT NOT NULL,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_messages_jid ON messages(jid);
+    CREATE INDEX IF NOT EXISTS idx_messages_created_at ON messages(created_at);
   `);
 }
 
@@ -31,6 +42,14 @@ interface ConversationState {
   humanTakeover: boolean;
   lastActivity: Date;
   humanTakeoverAt: Date | null;
+}
+
+export interface MessageRow {
+  id: number;
+  jid: string;
+  direction: "in" | "out";
+  body: string;
+  created_at: string;
 }
 
 function rowToState(row: ConversationRow): ConversationState {
@@ -112,4 +131,29 @@ export function isHumanTakeover(jid: string): boolean {
 
 export function resetState(jid: string): void {
   db.prepare("DELETE FROM conversations WHERE jid = ?").run(jid);
+}
+
+export function getAllConversations(): ConversationRow[] {
+  return db.prepare("SELECT * FROM conversations ORDER BY last_activity DESC").all() as ConversationRow[];
+}
+
+export function logMessage(jid: string, direction: "in" | "out", body: string): void {
+  db.prepare(
+    "INSERT INTO messages (jid, direction, body, created_at) VALUES (?, ?, ?, ?)"
+  ).run(jid, direction, body, new Date().toISOString());
+}
+
+export function getMessages(jid: string, limit = 50, offset = 0): MessageRow[] {
+  return db.prepare(
+    "SELECT * FROM messages WHERE jid = ? ORDER BY created_at DESC LIMIT ? OFFSET ?"
+  ).all(jid, limit, offset) as MessageRow[];
+}
+
+export function getAnalytics(): { totalConversations: number; humanTakeover: number; messagesToday: number } {
+  const total = (db.prepare("SELECT COUNT(*) as n FROM conversations").get() as { n: number }).n;
+  const human = (db.prepare("SELECT COUNT(*) as n FROM conversations WHERE human_takeover = 1").get() as { n: number }).n;
+  const today = (db.prepare(
+    "SELECT COUNT(*) as n FROM messages WHERE created_at >= date('now')"
+  ).get() as { n: number }).n;
+  return { totalConversations: total, humanTakeover: human, messagesToday: today };
 }

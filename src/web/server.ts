@@ -10,6 +10,7 @@ import { createApiRouter } from "./routes/api";
 
 let currentSock: WASocket | null = null;
 let currentPhone: string | null = null;
+let currentStatus: string = "close";
 
 export interface WebServer {
   setSock: (sock: WASocket) => void;

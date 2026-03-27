@@ -9,6 +9,7 @@ import { botEmitter } from "./emitter";
 import { createApiRouter } from "./routes/api";
 
 let currentSock: WASocket | null = null;
+let currentPhone: string | null = null;
 
 export interface WebServer {
   setSock: (sock: WASocket) => void;

@@ -41,8 +41,11 @@ export async function startWebServer(port = 3000): Promise<WebServer> {
     });
   }
 
-  // Enviar QR cacheado para novos clientes que conectam depois da emissão
+  // Enviar estado atual para novos clientes WebSocket
   wss.on("connection", (ws) => {
+    // Envia status atual para o cliente saber se já está conectado
+    ws.send(JSON.stringify({ type: "connection", data: { status: currentStatus, phone: currentPhone } }));
+    // Se tem QR pendente, envia também
     if (lastQrDataUrl && currentStatus !== "open") {
       ws.send(JSON.stringify({ type: "qr", data: { qr: lastQrDataUrl } }));
     }

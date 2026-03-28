@@ -41,10 +41,18 @@ export async function startWebServer(port = 3000): Promise<WebServer> {
     });
   }
 
+  // Enviar QR cacheado para novos clientes que conectam depois da emissão
+  wss.on("connection", (ws) => {
+    if (lastQrDataUrl && currentStatus !== "open") {
+      ws.send(JSON.stringify({ type: "qr", data: { qr: lastQrDataUrl } }));
+    }
+  });
+
   // Assinar eventos do bot e repassar para o browser
   botEmitter.on("qr", async ({ qr }: { qr: string }) => {
     try {
       const dataUrl = await QRCode.toDataURL(qr);
+      lastQrDataUrl = dataUrl;
       broadcast({ type: "qr", data: { qr: dataUrl } });
     } catch {}
   });
@@ -53,6 +61,7 @@ export async function startWebServer(port = 3000): Promise<WebServer> {
     currentStatus = data.status;
     if (data.status === "open" && data.phone) {
       currentPhone = data.phone;
+      lastQrDataUrl = null;
     } else if (data.status === "close") {
       currentPhone = null;
     }

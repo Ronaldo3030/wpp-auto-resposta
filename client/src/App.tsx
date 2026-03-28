@@ -27,8 +27,11 @@ export default function App() {
   async function fetchStatus() {
     try {
       const res = await fetch('/api/status')
-      const data = await res.json() as { status: string; phone?: string }
+      const data = await res.json() as { status: string; phone?: string; qr?: string }
       applyConnectionStatus(data.status, data.phone)
+      if (data.qr) {
+        setQrDataUrl(data.qr)
+      }
     } catch {}
   }
 

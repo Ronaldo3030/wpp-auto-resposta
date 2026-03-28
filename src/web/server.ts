@@ -26,7 +26,7 @@ export async function startWebServer(port = 3000): Promise<WebServer> {
   app.use(express.static(path.resolve(process.cwd(), "public")));
 
   // API REST
-  app.use("/api", createApiRouter(() => currentSock, () => currentPhone, () => currentStatus));
+  app.use("/api", createApiRouter(() => currentSock, () => currentPhone, () => currentStatus, () => lastQrDataUrl));
 
   const server = http.createServer(app);
   const wss = new WebSocketServer({ server });

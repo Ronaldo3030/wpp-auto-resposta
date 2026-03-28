@@ -14,6 +14,7 @@ export function createApiRouter(
   getSock: () => WASocket | null,
   getPhone: () => string | null,
   getStatus: () => string,
+  getQrDataUrl: () => string | null,
 ): Router {
   const router = Router();
 
@@ -23,6 +24,7 @@ export function createApiRouter(
       connected: status === "open",
       status,
       phone: getPhone(),
+      qr: getQrDataUrl(),
     });
   });
 
